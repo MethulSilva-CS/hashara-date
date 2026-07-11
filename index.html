@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>A Little Question for Hashara ❤️</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+
+.card{
+background:white;
+padding:40px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,.2);
+width:350px;
+z-index:10;
+}
+
+
+h1{
+color:#ff4d6d;
+}
+
+
+p{
+color:#444;
+}
+
+
+.button-container{
+
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:20px;
+
+}
+
+
+button{
+
+padding:12px 25px;
+border:none;
+border-radius:10px;
+font-size:18px;
+cursor:pointer;
+
+}
+
+
+.yes{
+
+background:#28a745;
+color:white;
+
+}
+
+
+.no{
+
+background:#dc3545;
+color:white;
+position:relative;
+
+}
+
+
+.confirm{
+
+background:#ff4d6d;
+color:white;
+width:100%;
+
+}
+
+
+input,select,textarea{
+
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:15px;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:16px;
+
+}
+
+
+/* Hearts */
+
+.heart{
+
+position:absolute;
+bottom:-50px;
+color:#ff4d6d;
+animation:fly 8s linear infinite;
+z-index:1;
+
+}
+
+
+@keyframes fly{
+
+0%{
+transform:translateY(0);
+opacity:1;
+}
+
+100%{
+transform:translateY(-120vh);
+opacity:0;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<h1>
+Hi Hashara 😊
+</h1>
+
+
+<p>
+I really enjoy talking with you.
+</p>
+
+
+<p>
+Would you like to go on a date with me? ❤️
+</p>
+
+
+<div class="button-container">
+
+
+<button class="yes" id="yesBtn">
+Yes 💖
+</button>
+
+
+<button class="no" id="noBtn">
+No 😶‍🌫️
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<script type="module">
+
+
+// Firebase imports
+
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+addDoc
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+// Firebase config
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyB39BgBEK8pDzl9j42TICH4qBhnHgVk2dY",
+
+authDomain: "hashara-date.firebaseapp.com",
+
+projectId: "hashara-date",
+
+storageBucket: "hashara-date.firebasestorage.app",
+
+messagingSenderId: "341853160785",
+
+appId: "1:341853160785:web:5a28eab424b7ef98f17f70"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+
+
+// hearts
+
+function createHeart(){
+
+let heart=document.createElement("div");
+
+heart.className="heart";
+
+heart.innerHTML="❤️";
+
+heart.style.left=Math.random()*100+"vw";
+
+heart.style.fontSize=(15+Math.random()*30)+"px";
+
+heart.style.animationDuration=(5+Math.random()*5)+"s";
+
+
+document.body.appendChild(heart);
+
+
+setTimeout(()=>{
+
+heart.remove();
+
+},10000);
+
+
+}
+
+
+setInterval(createHeart,500);
+
+
+
+
+
+
+// yes button
+
+document.getElementById("yesBtn").onclick=function(){
+
+
+document.body.innerHTML=`
+
+
+<div class="card">
+
+
+<h1>
+Yeah!! ❤️
+</h1>
+
+
+<p>
+Let's plan our first date 😊
+</p>
+
+
+<label>
+<b>📅 Choose Date</b>
+</label>
+
+
+<input 
+type="date"
+id="date"
+min="2026-07-27"
+>
+
+
+
+<label>
+<b>📍 Choose Place</b>
+</label>
+
+
+<select id="place">
+
+<option value="">
+Choose a place ❤️
+</option>
+
+
+<option>
+Café Blanc ☕
+</option>
+
+
+<option>
+Karabu 🍽️
+</option>
+
+
+<option>
+Movie Date 🎬
+</option>
+
+
+<option>
+Surprise Me ✨
+</option>
+
+
+</select>
+
+
+
+<label>
+<b>💌 Message</b>
+</label>
+
+
+<textarea 
+id="message"
+placeholder="Write something 😊">
+</textarea>
+
+
+
+<button id="confirmBtn" class="confirm">
+
+Confirm ❤️
+
+</button>
+
+
+</div>
+
+`;
+
+
+
+document.getElementById("confirmBtn").onclick=confirmDate;
+
+
+};
+
+
+
+
+
+
+async function confirmDate(){
+
+
+let date=document.getElementById("date").value;
+
+let place=document.getElementById("place").value;
+
+let message=document.getElementById("message").value;
+
+
+
+if(!date){
+
+alert("Please choose a date 😊");
+return;
+
+}
+
+
+
+if(!place){
+
+alert("Please choose a place 😊");
+return;
+
+}
+
+
+
+if(place==="Surprise Me ✨"){
+
+
+let places=[
+
+"Café Blanc ☕",
+
+"Karabu 🍽️",
+
+"Movie Date 🎬"
+
+];
+
+
+place=places[Math.floor(Math.random()*places.length)];
+
+
+}
+
+
+
+try{
+
+
+await addDoc(collection(db,"dateResponses"),{
+
+
+name:"Hashara",
+
+date:date,
+
+place:place,
+
+message:message,
+
+time:new Date()
+
+
+});
+
+
+
+document.body.innerHTML=`
+
+
+<div style="
+
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff758c,#ff7eb3);
+font-family:Arial;
+text-align:center;
+color:white;
+
+">
+
+
+<div>
+
+
+<h1>
+🎉 It's a Date Hashara ❤️
+</h1>
+
+
+<h2>
+📅 ${date}
+</h2>
+
+
+<h2>
+📍 ${place}
+</h2>
+
+
+<p>
+${message}
+</p>
+
+
+<h3>
+I can't wait to see you 😊❤️
+</h3>
+
+
+</div>
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+alert("Firebase error. Check console.");
+
+
+}
+
+
+}
+
+
+
+
+
+// no button escape
+
+const noBtn=document.getElementById("noBtn");
+
+
+noBtn.addEventListener("mouseover",()=>{
+
+
+noBtn.style.position="fixed";
+
+noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+
+noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
+
+
+});
+
+
+noBtn.addEventListener("click",()=>{
+
+
+noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+
+noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
+
+
+});
+
+
+
+</script>
+
+
+</body>
+
+</html>
